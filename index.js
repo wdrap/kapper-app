@@ -16,30 +16,32 @@ const database = getDatabase(app);
 const slots = ref(database, "slots");
 const reservations = ref(database, "reservations");
 
-const amHours = ["10:00", "10:30", "11:00", "11:30"];
-const pmHours = ["13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
-const daysOfWeek = [
-    ["Zo", amHours],
-    ["Ma", pmHours],
-    ["Di", amHours],
-    ["Wo", amHours.concat(pmHours)],
-    ["Do", amHours.concat(pmHours)],
-    ["Vr", amHours],
-    ["Za", amHours.concat(pmHours)]
-];
+// const amHours = ["10:00", "10:30", "11:00", "11:30"];
+// const pmHours = ["13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
+// const daysOfWeek = [
+//     ["Zo", amHours],
+//     ["Ma", pmHours],
+//     ["Di", amHours],
+//     ["Wo", amHours.concat(pmHours)],
+//     ["Do", amHours.concat(pmHours)],
+//     ["Vr", amHours],
+//     ["Za", amHours.concat(pmHours)]
+// ];
 
 let selectedSlot;
 
+const timeslotDiv = document.getElementById("timeslot");
 for (let i = 0; i < 14; i++) {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + i);
 
-    set(ref(database, "slots/" + i), {
-        forDate: currentDate.toDateString(),
-    });
+    appendDaySlot([i, currentDate])
+    appendHourSlot(currentDate, i)
+    // set(ref(database, "slots/" + i), {
+    //     forDate: currentDate.toDateString(),
+    // });
 }
 
-const timeslotDiv = document.getElementById("timeslot");
 const popup = document.getElementById("popup");
 const confirmSlotBtn = document.getElementById("confirm-slot-btn");
 const cancelSlotBtn = document.getElementById("cancel-slot-btn");
@@ -66,27 +68,27 @@ cancelSlotBtn.addEventListener("click", () => {
     popup.classList.remove("open");
 });
 
-onValue(slots, function (snapshot) {
-    if (snapshot.exists()) {
-        let slotEntries = Object.entries(snapshot.val())
-        slotEntries.forEach((day) => appendDaySlot(day));
-        slotEntries.forEach((element, index) => {
-            appendHourSlot(element[1].forDate, index)
-        })
-    }
-});
-
-onValue(reservations, (snapshot) => {
-    let reservationKeys = snapshot.exists() ? Object.keys(snapshot.val()) : [];
-    Array.from(document.getElementsByTagName("input"))
-        .forEach(element => {
-            if (reservationKeys.find(e => e === element.id)) {
-                element.setAttribute("disabled", "");
-            } else {
-                element.removeAttribute("disabled");
-            }
-        })
-});
+// onValue(slots, function (snapshot) {
+//     if (snapshot.exists()) {
+//         let slotEntries = Object.entries(snapshot.val())
+//         slotEntries.forEach((day) => appendDaySlot(day));
+//         slotEntries.forEach((element, index) => {
+//             appendHourSlot(element[1].forDate, index)
+//         })
+//     }
+// });
+//
+// onValue(reservations, (snapshot) => {
+//     let reservationKeys = snapshot.exists() ? Object.keys(snapshot.val()) : [];
+//     Array.from(document.getElementsByTagName("input"))
+//         .forEach(element => {
+//             if (reservationKeys.find(e => e === element.id)) {
+//                 element.setAttribute("disabled", "");
+//             } else {
+//                 element.removeAttribute("disabled");
+//             }
+//         })
+// });
 
 function showMessage() {
     const title = document.getElementById("popup-title");
@@ -104,15 +106,15 @@ function showMessage() {
 }
 
 function appendDaySlot(element) {
-    const [index, slot] = element;
-    const currentDate = new Date(slot.forDate);
-    const formattedDay = currentDate.toLocaleDateString("nl-BE", {day: "2-digit"});
-    const formattedMonth = currentDate.toLocaleDateString("nl-BE", {month: "short"});
-    const formattedWeekDay = currentDate.toLocaleDateString("nl-BE", {weekday: "long"});
-    timeslotDiv.innerHTML += `
-  <fieldset id="day_${index}">
-    <legend>${formattedWeekDay} <span>${formattedDay}</spam> <span class="small"> ${formattedMonth}</span></legend>
-  </fieldset>`;
+  //   const [index, slot] = element;
+  //   const currentDate =  slot; //new Date(slot.forDate);
+  //   const formattedDay = currentDate.toLocaleDateString("nl-BE", {day: "2-digit"});
+  //   const formattedMonth = currentDate.toLocaleDateString("nl-BE", {month: "short"});
+  //   const formattedWeekDay = currentDate.toLocaleDateString("nl-BE", {weekday: "long"});
+  //   timeslotDiv.innerHTML += `
+  // <fieldset id="day_${index}">
+  //   <legend>${formattedWeekDay} <span>${formattedDay}</spam> <span class="small"> ${formattedMonth}</span></legend>
+  // </fieldset>`;
 }
 
 function appendHourSlot(date, index) {

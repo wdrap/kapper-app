@@ -20,9 +20,13 @@
         <div class="sticky-top">
             <button class="rounded-button" disabled>Reserveer</button>
         </div>
-        <div id="timeslot" class="timeslot"></div>
+        <appointment-cal></appointment-cal>
+        <div id="app">
+        </div>
+
+<!--        <div id="timeslot" class="timeslot"></div>-->
         <div class="sticky-bottom">
-            <button class="rounded-button" disabled>Reserveer</button>
+            <button class="rounded-button" route-link="/login" disabled>Reserveer</button>
         </div>
         <p>
             <small>Pruytenshof 43, 9260 Serskamp - 0476/955.316<br>Copyright 2023 (applicatie)</small>
@@ -37,7 +41,8 @@
         </div>
 
     </div>
-    <script src="index.js" type="module"></script>
+    <script src="router.js" type="module"></script>
+<!--    <script src="index.js" type="module"></script>-->
 </body>
 
 </html>
