@@ -1,3 +1,5 @@
+import {calendar, selectedSlot} from "./calendar.js";
+
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {getDatabase, onValue, ref, set} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -16,77 +18,82 @@ const database = getDatabase(app);
 const slots = ref(database, "slots");
 const reservations = ref(database, "reservations");
 
-const amHours = ["10:00", "10:30", "11:00", "11:30"];
-const pmHours = ["13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"];
-const daysOfWeek = [
-    ["Zo", amHours],
-    ["Ma", pmHours],
-    ["Di", amHours],
-    ["Wo", amHours.concat(pmHours)],
-    ["Do", amHours.concat(pmHours)],
-    ["Vr", amHours],
-    ["Za", amHours.concat(pmHours)]
-];
+calendar()
 
-let selectedSlot;
+document.getElementById("cancel").addEventListener("click", () => {
+    flipCard()
+})
 
-for (let i = 0; i < 14; i++) {
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + i);
 
-    set(ref(database, "slots/" + i), {
-        forDate: currentDate.toDateString(),
-    });
+function flipCard() {
+    scrollTo(0, function () {
+        document.getElementById("card").classList.toggle("flipped")
+    })
 }
 
-const timeslotDiv = document.getElementById("timeslot");
+function scrollTo(offset, callback) {
+    const fixedOffset = offset.toFixed();
+    const onScroll = function () {
+        if (window.scrollY.toFixed() === fixedOffset) {
+            window.removeEventListener('scroll', onScroll)
+            callback()
+        }
+    }
+
+    window.addEventListener('scroll', onScroll)
+    onScroll()
+    window.scrollTo({top: offset, behavior: 'smooth'})
+}
+
+
 const popup = document.getElementById("popup");
-const confirmSlotBtn = document.getElementById("confirm-slot-btn");
-const cancelSlotBtn = document.getElementById("cancel-slot-btn");
+// const confirmSlotBtn = document.getElementById("confirm-slot-btn");
+// const cancelSlotBtn = document.getElementById("cancel-slot-btn");
 const chooseSlotBtn = document.querySelectorAll(".rounded-button");
 
 chooseSlotBtn.forEach(e => e.addEventListener("click", function (e) {
     if (selectedSlot) {
-        showMessage();
+        flipCard()
+        // showMessage();
     }
 }))
 
-confirmSlotBtn.addEventListener("click", () => {
-    set(ref(database, "reservations/" + selectedSlot.getTime()), {
-        name: "wim",
-        phone: "0476/955.316",
-        at: selectedSlot.toDateString()
-    });
+// confirmSlotBtn.addEventListener("click", () => {
+//     // set(ref(database, "reservations/" + selectedSlot.getTime()), {
+//     //     name: "wim",
+//     //     phone: "0476/955.316",
+//     //     at: selectedSlot.toDateString()
+//     // });
+//
+//     chooseSlotBtn.forEach(e => e.setAttribute("disabled", ""));
+//     popup.classList.remove("open");
+// })
 
-    chooseSlotBtn.forEach(e => e.setAttribute("disabled", ""));
-    popup.classList.remove("open");
-})
+// cancelSlotBtn.addEventListener("click", () => {
+//     popup.classList.remove("open");
+// });
 
-cancelSlotBtn.addEventListener("click", () => {
-    popup.classList.remove("open");
-});
-
-onValue(slots, function (snapshot) {
-    if (snapshot.exists()) {
-        let slotEntries = Object.entries(snapshot.val())
-        slotEntries.forEach((day) => appendDaySlot(day));
-        slotEntries.forEach((element, index) => {
-            appendHourSlot(element[1].forDate, index)
-        })
-    }
-});
-
-onValue(reservations, (snapshot) => {
-    let reservationKeys = snapshot.exists() ? Object.keys(snapshot.val()) : [];
-    Array.from(document.getElementsByTagName("input"))
-        .forEach(element => {
-            if (reservationKeys.find(e => e === element.id)) {
-                element.setAttribute("disabled", "");
-            } else {
-                element.removeAttribute("disabled");
-            }
-        })
-});
+// onValue(slots, function (snapshot) {
+//     if (snapshot.exists()) {
+//         let slotEntries = Object.entries(snapshot.val())
+//         slotEntries.forEach((day) => appendDaySlot(day));
+//         slotEntries.forEach((element, index) => {
+//             appendHourSlot(element[1].forDate, index)
+//         })
+//     }
+// });
+//
+// onValue(reservations, (snapshot) => {
+//     let reservationKeys = snapshot.exists() ? Object.keys(snapshot.val()) : [];
+//     Array.from(document.getElementsByTagName("input"))
+//         .forEach(element => {
+//             if (reservationKeys.find(e => e === element.id)) {
+//                 element.setAttribute("disabled", "");
+//             } else {
+//                 element.removeAttribute("disabled");
+//             }
+//         })
+// });
 
 function showMessage() {
     const title = document.getElementById("popup-title");
@@ -101,39 +108,4 @@ function showMessage() {
         Tot dan 😉`;
 
     popup.classList.add("open");
-}
-
-function appendDaySlot(element) {
-    const [index, slot] = element;
-    const currentDate = new Date(slot.forDate);
-    const formattedDay = currentDate.toLocaleDateString("nl-BE", {day: "2-digit"});
-    const formattedMonth = currentDate.toLocaleDateString("nl-BE", {month: "short"});
-    const formattedWeekDay = currentDate.toLocaleDateString("nl-BE", {weekday: "long"});
-    timeslotDiv.innerHTML += `
-  <fieldset id="day_${index}">
-    <legend>${formattedWeekDay} <span>${formattedDay}</spam> <span class="small"> ${formattedMonth}</span></legend>
-  </fieldset>`;
-}
-
-function appendHourSlot(date, index) {
-    const currentDate = new Date(date);
-    daysOfWeek[currentDate.getDay()][1].forEach((time) => {
-        const [hour, minute] = time.split(":");
-        currentDate.setHours(hour, minute);
-
-        const timeTag = document.createElement("time");
-        timeTag.setAttribute("datetime", `${currentDate}`);
-        timeTag.textContent = time;
-        timeTag.addEventListener("click", function (e) {
-            selectedSlot = new Date(e.target.getAttribute("datetime"));
-            chooseSlotBtn.forEach(e => e.removeAttribute("disabled"));
-        });
-
-        const label = document.createElement("label");
-        label.innerHTML = `<input id="${currentDate.getTime()}" type="radio" name="timeslot" data-sr>`;
-        label.append(timeTag);
-
-        const fieldset = document.getElementById("day_" + index);
-        fieldset.append(label);
-    })
 }

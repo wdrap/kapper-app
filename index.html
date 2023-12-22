@@ -15,29 +15,46 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Herenkapper</h1>
-        <div class="sticky-top">
-            <button class="rounded-button" disabled>Reserveer</button>
-        </div>
-        <div id="timeslot" class="timeslot"></div>
-        <div class="sticky-bottom">
-            <button class="rounded-button" disabled>Reserveer</button>
-        </div>
-        <p>
-            <small>Pruytenshof 43, 9260 Serskamp - 0476/955.316<br>Copyright 2023 (applicatie)</small>
-        </p>
-        <div class="popup" id="popup">
-            <div class="popup-inner">
-                <h2 id="popup-title">Geweldig, Naam</h2>
-                <p id="popup-message"></p>
-                <button id="confirm-slot-btn">Ja</button>
-                <button id="cancel-slot-btn">Nee</button>
+<h1>Herenkapper</h1>
+<div class="container">
+    <div class="card flipped" id="card">
+        <div class="front">
+            <div class="sticky-top">
+                <button class="rounded-button" disabled>Reserveer</button>
+            </div>
+            <div id="timeslot" class="timeslot"></div>
+            <div class="sticky-bottom">
+                <button class="rounded-button" disabled>Reserveer</button>
             </div>
         </div>
+        <div class="back">
 
+            <div class="confirmation-card">
+                <div class="div right">
+                    <button type="button" class="cross-stand-alone" id="cancel">x</button>
+                </div>
+                <p>Vul in om een afspraak te maken.</p>
+                <p><input type="text" id="name" placeholder="Naam" oninput="confirmName.value = value"></p>
+                <p><input type="text" id="phone" placeholder="Telefoon (Niet verplicht)" oninput="confirmPhone.value = value"></p>
+                <div class="confirmation">
+                    <h3>Geweldig, <input type="text" id="confirmName"></h3>
+                    <p>Je afspraak op ${date} om ${time} bevestigen?</p>
+                    <p>Bedankt en tot dan.</p>
+                    <input type="text" id="confirmPhone">
+                </div>
+                <div class="right">
+                    <input type="button" value="Boek mijn afspraak">
+                </div>
+            </div>
+
+        </div>
     </div>
-    <script src="index.js" type="module"></script>
+</div>
+
+<p>
+    <small>Pruytenshof 43, 9260 Serskamp - 0476/955.316<br>Copyright 2023 (applicatie)</small>
+</p>
+<script src="index.js" type="module"></script>
 </body>
 
 </html>

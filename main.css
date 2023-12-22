@@ -14,8 +14,11 @@
 .container {
     display: flex;
     flex-direction: column;
-    max-width: 360px;
-    margin: 15px auto;
+    /* if we want to center on large screens */
+    /*position: relative;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
 }
 
 button {
@@ -123,24 +126,22 @@ h1 {
     width: 1px;
 }
 
+/* sticky top and bottom */
 .sticky-top, .sticky-bottom {
     position: -webkit-sticky;
     position: sticky;
     display: none;
     justify-content: end;
 }
-
 .sticky-top {
     top: 0;
     margin-top: -60px;
 }
-
 .sticky-bottom {
     display: flex;
     bottom: 0;
     margin-right: -20px;
 }
-
 .sticky-top a,
 .sticky-bottom a {
     margin: 20px 0;
@@ -155,18 +156,7 @@ h1 {
     align-items: center;
 }
 
-.rounded-button {
-    width: 80px;
-    height: 80px;
-    margin: 15px 13px;
-    border-radius: 50%;
-    font-size: 14px;
-}
-
-.rounded-button:disabled {
-    background: var(--gray-6);
-}
-
+/* popup */
 .popup {
     background-color: rgba(0, 0, 0, 0.3);
     opacity: 0;
@@ -211,22 +201,18 @@ h1 {
     padding: 10px 25px;
 }
 
+
 @media (min-width: 800px) {
     .container {
         flex-direction: column;
         max-width: 780px;
     }
-
-    .timeslot {
-        flex-direction: row;
-    }
-
-    .sticky-top {
-        display: flex;
-    }
-
-    .sticky-bottom {
-        display: none;
+    .timeslot { flex-direction: row; }
+    .sticky-top { display: flex; }
+    .sticky-bottom { display: none; }
+    .front {
+        /* hides the button when flipped */
+        overflow: hidden;
     }
 }
 
@@ -245,4 +231,120 @@ body {
 
 mark {
     background-color: hsl(190, 40%, 85%);
+}
+/* rounded button */
+.rounded-button {
+    width: 80px;
+    height: 80px;
+    margin: 15px 13px;
+    border-radius: 50%;
+    font-size: 14px;
+}
+.rounded-button:disabled { background: var(--gray-6); }
+
+/* cross button */
+.cross-stand-alone {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+.cross-stand-alone:before, .cross-stand-alone:after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #000;
+    border-radius: 4px;
+}
+.cross-stand-alone:before {
+    transform: rotate(45deg);
+}
+.cross-stand-alone:after {
+    transform: rotate(-45deg);
+}
+.cross-stand-alone span {
+    display: block;
+}
+/* end cross button */
+
+/* flipcard */
+.card {
+    transform-style: preserve-3d;
+    transition: all 0.8s ease;
+}
+.card.flipped { transform: rotateY(-180deg); }
+.front { }
+.back{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: var(--gray-1);
+    color: var(--gray-9);
+    transform: rotateY(180deg);
+}
+
+/* confirmation card */
+.confirmation-card {
+    max-width: 360px;
+    margin: 0 auto;
+    font-size: large;
+
+}
+p input[type=text] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--accent-color);
+    border-radius: var(--bdrs);
+    box-sizing: border-box;
+    background-color: var(--gray-1);
+    color: var(--gray-9);
+    font-size: large;
+    font-weight: normal;
+}
+.p input[type=text]:focus {
+    border-color: var(--accent-color);
+    background-color: var(--accent-color-light) ;
+}
+.confirmation {
+    background: var(--accent-color);
+    color: var(--accent-text-color);
+    border-radius: var(--bdrs);
+    display: block;
+    padding: var(--gap);
+    font-size: large;
+    margin: 25px 0;
+}
+
+.confirmation input[type=text] {
+    -webkit-appearance: none;
+    appearance: none;
+    user-select: none;
+    width: 200px !important;
+    letter-spacing: normal;
+    border: none;
+    font-size: large;
+    font-weight: bold;
+    background: var(--accent-color);
+    color: var(--accent-text-color);
+}
+.confirmation-card input[type=button]{
+    background: var(--accent-color);
+    border: none;
+    padding: 8px 10px 8px 10px;
+    border-radius: 5px;
+    color: var(--accent-text-color);
+}
+
+/* containers */
+.right {
+    text-align: right;
 }
